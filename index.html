@@ -21,6 +21,9 @@
                 800: '#075985',
                 900: '#0c4a6e',
               }
+            },
+            animation: {
+              'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
             }
           }
         }
@@ -31,15 +34,22 @@
   "imports": {
     "react/": "https://aistudiocdn.com/react@^19.2.1/",
     "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/client": "https://aistudiocdn.com/react-dom@^19.2.1/client",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react-dom": "https://aistudiocdn.com/react-dom@^19.2.1",
     "lucide-react": "https://aistudiocdn.com/lucide-react@^0.556.0",
-    "recharts": "https://aistudiocdn.com/recharts@^3.5.1",
-    "react-markdown": "https://aistudiocdn.com/react-markdown@^10.1.0"
+    "recharts": "https://aistudiocdn.com/recharts@^3.5.1"
   }
 }
 </script>
 </head>
   <body class="bg-gray-50 text-slate-800 antialiased overflow-hidden">
-    <div id="root"></div>
+    <div id="root" class="h-screen w-screen flex flex-col items-center justify-center bg-gray-50">
+      <div class="relative w-24 h-24 mb-4">
+        <img src="https://cdn-icons-png.flaticon.com/512/2405/2405479.png" alt="Loading" class="w-full h-full object-contain animate-bounce" />
+      </div>
+      <h2 class="text-xl font-bold text-slate-700 animate-pulse">Carregando Plena...</h2>
+      <p class="text-slate-400 text-sm mt-2">Versão 2.0</p>
+    </div>
   </body>
 </html>

@@ -151,7 +151,7 @@ const Settings: React.FC = () => {
       </div>
       
       <div className="mt-8 text-center text-xs text-slate-400">
-        <p>Versão 1.3.0 (Build 2025) - Online Mode Required</p>
+        <p>Versão Final 2.0 (Sem IA)</p>
       </div>
     </div>
   );
