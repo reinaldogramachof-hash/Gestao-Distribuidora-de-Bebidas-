@@ -1,4 +1,4 @@
-const CACHE_NAME = 'plena-bebidas-v6-deploy-fix';
+const CACHE_NAME = 'plena-bebidas-v7-fix-entry';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
