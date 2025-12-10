@@ -1,13 +1,18 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { StorageService } from '../services/storage';
-import { Download, Upload, ShieldCheck, Database, Smartphone, Wifi } from 'lucide-react';
+import { Download, Upload, ShieldCheck, Database, Smartphone, Wifi, Share, PlusSquare, MonitorDown } from 'lucide-react';
 
 const Settings: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstalled, setIsInstalled] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
 
   useEffect(() => {
+    // Detect iOS
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    setIsIOS(/iphone|ipad|ipod/.test(userAgent));
+
     // Check if app is already in standalone mode
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsInstalled(true);
@@ -23,7 +28,10 @@ const Settings: React.FC = () => {
   }, []);
 
   const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
+    if (!deferredPrompt) {
+      alert("Para instalar, utilize a opção 'Adicionar à Tela Inicial' no menu do seu navegador.");
+      return;
+    }
     deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     if (outcome === 'accepted') {
@@ -41,7 +49,7 @@ const Settings: React.FC = () => {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    setTimeout(() => URL.revokeObjectURL(url), 100);
   };
 
   const handleImport = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -62,12 +70,12 @@ const Settings: React.FC = () => {
   };
 
   return (
-    <div className="p-6 max-w-2xl mx-auto h-full overflow-y-auto">
+    <div className="p-6 max-w-2xl mx-auto h-full overflow-y-auto pb-24">
       <h2 className="text-2xl font-bold text-slate-800 mb-6">Configurações & Dados</h2>
 
-      {/* App Install Section */}
-      {!isInstalled && deferredPrompt && (
-        <div className="bg-gradient-to-r from-indigo-600 to-plena-600 rounded-xl p-6 text-white shadow-lg mb-6 flex items-center justify-between">
+      {/* App Install Section - ANDROID/DESKTOP */}
+      {!isInstalled && !isIOS && (
+        <div className="bg-gradient-to-r from-indigo-600 to-plena-600 rounded-xl p-6 text-white shadow-lg mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex gap-4 items-center">
             <div className="p-3 bg-white/20 rounded-lg backdrop-blur-sm">
               <Smartphone size={24} className="text-white" />
@@ -79,10 +87,39 @@ const Settings: React.FC = () => {
           </div>
           <button 
             onClick={handleInstallClick}
-            className="px-4 py-2 bg-white text-indigo-700 font-bold rounded-lg hover:bg-indigo-50 transition-colors shadow-sm"
+            className="w-full sm:w-auto px-4 py-2 bg-white text-indigo-700 font-bold rounded-lg hover:bg-indigo-50 transition-colors shadow-sm whitespace-nowrap"
           >
-            Instalar Agora
+            {deferredPrompt ? 'Instalar Agora' : 'Como Instalar?'}
           </button>
+        </div>
+      )}
+
+      {/* App Install Section - iOS ONLY */}
+      {!isInstalled && isIOS && (
+        <div className="bg-slate-800 rounded-xl p-6 text-white shadow-lg mb-6 border border-slate-700">
+          <div className="flex gap-4 items-center mb-4">
+            <div className="p-3 bg-white/10 rounded-lg">
+              <Smartphone size={24} />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold">Instalar no iPhone/iPad</h3>
+              <p className="text-slate-400 text-sm">Siga os passos abaixo:</p>
+            </div>
+          </div>
+          <div className="space-y-3 text-sm text-slate-300 bg-slate-900/50 p-4 rounded-lg">
+            <div className="flex items-center gap-3">
+              <span className="bg-slate-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">1</span>
+              <p>Toque no botão <Share size={16} className="inline mx-1"/> <span className="font-bold text-white">Compartilhar</span> na barra inferior.</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="bg-slate-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">2</span>
+              <p>Role para cima e toque em <span className="font-bold text-white">Adicionar à Tela de Início</span>.</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="bg-slate-700 w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold">3</span>
+              <p>Confirme clicando em <span className="font-bold text-white">Adicionar</span> no canto superior.</p>
+            </div>
+          </div>
         </div>
       )}
 
@@ -92,7 +129,7 @@ const Settings: React.FC = () => {
         <div>
           <h4 className="text-amber-800 font-bold mb-1">Conexão Necessária</h4>
           <p className="text-sm text-amber-700 leading-relaxed">
-            Para o correto funcionamento do sistema, carregamento de ícones e estilos, é necessário que o dispositivo esteja conectado à Internet.
+            Para garantir o carregamento correto de ícones e atualizações, mantenha o dispositivo conectado à Internet ao abrir o app.
           </p>
         </div>
       </div>
@@ -106,7 +143,7 @@ const Settings: React.FC = () => {
           <div>
             <h3 className="text-lg font-bold text-slate-900">Backup Local</h3>
             <p className="text-slate-500 text-sm">
-              Seus dados ficam salvos no navegador. Faça backup regularmente para garantir a segurança das informações.
+              Seus dados ficam salvos no navegador. Faça o download regularmente para evitar perda de dados.
             </p>
           </div>
         </div>
@@ -117,7 +154,7 @@ const Settings: React.FC = () => {
             className="flex flex-col items-center justify-center p-6 border-2 border-slate-100 hover:border-plena-500 hover:bg-plena-50 rounded-xl transition-all group"
           >
             <Download className="w-8 h-8 text-slate-400 group-hover:text-plena-600 mb-3" />
-            <span className="font-bold text-slate-700 group-hover:text-plena-700">Baixar Backup</span>
+            <span className="font-bold text-slate-700 group-hover:text-plena-700">Baixar Backup (PC/Mobile)</span>
             <span className="text-xs text-slate-400 mt-1">Salvar arquivo .json</span>
           </button>
 
@@ -144,14 +181,14 @@ const Settings: React.FC = () => {
         <div>
           <h4 className="text-white font-bold mb-1">Privacidade & Dados</h4>
           <p className="text-sm leading-relaxed">
-            A Plena não tem acesso aos seus dados financeiros. Tudo é processado no seu navegador. 
-            Mantenha seu backup atualizado.
+            A Plena não tem acesso aos seus dados financeiros. Tudo é processado localmente no seu dispositivo. 
+            Mantenha seu backup em dia.
           </p>
         </div>
       </div>
       
       <div className="mt-8 text-center text-xs text-slate-400">
-        <p>Versão Final 2.0 (Sem IA)</p>
+        <p>Versão Mobile Otimizada 2.2</p>
       </div>
     </div>
   );
